@@ -2,6 +2,7 @@
 const fetch = require("node-fetch");
 const getProfile = require("../utils/get-profile");
 const createUser = require("../utils/create-user");
+const updateUser = require("../utils/update-user");
 const isUserLoggedIn = require("../utils/is-user-logged-in");
 const { getService } = require("@strapi/plugin-users-permissions/server/utils");
 
@@ -102,13 +103,17 @@ module.exports = ({ strapi }) => ({
             where: {
               email: jwt.email.toLowerCase(),
             },
+            populate: ["role"]
           })
           .then(async (user) => {
             if (!user) {
               return await createUser(jwt, strapi);
+            } else {
+              return await updateUser(jwt, strapi, user);
+
             }
 
-            return user;
+            // return user;
           })
           .catch(() => {
             throw new Error("User is not exist");
