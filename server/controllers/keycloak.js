@@ -4,7 +4,6 @@ const getProfile = require("../utils/get-profile");
 const createUser = require("../utils/create-user");
 const updateUser = require("../utils/update-user");
 const isUserLoggedIn = require("../utils/is-user-logged-in");
-const { getService } = require("@strapi/plugin-users-permissions/server/utils");
 
 const emailRegExp =
   // eslint-disable-next-line
@@ -52,6 +51,19 @@ const {
 
 const scope = "profile";
 
+//HACK TODO: Remove this when we have a better way to do this.
+const _ = require('lodash');
+const jwt = require('jsonwebtoken');
+
+function issue(strapi, payload, jwtOptions = {}) {
+  _.defaults(jwtOptions, strapi.config.get('plugin.users-permissions.jwt'));
+  return jwt.sign(
+    _.clone(payload.toJSON ? payload.toJSON() : payload),
+    strapi.config.get('plugin.users-permissions.jwtSecret'),
+    jwtOptions
+  );
+}
+
 /**
  * A set of functions called "actions" for `keycloak`
  */
@@ -66,7 +78,7 @@ module.exports = ({ strapi }) => ({
     );
   },
   callback: async (ctx) => {
-    const jwtService = getService("jwt");
+    // const jwtService = getService("jwt");
 
     // Strapi sometimes does not include the host name and protocol, making it an invalid URL.
     // With this code, we clean that up.
@@ -124,7 +136,7 @@ module.exports = ({ strapi }) => ({
           throw new Error("User not found and creation failed");
         }
 
-        return jwtService.issue({ id: user.id });
+        return issue(strapi, { id: user.id });
       })
       .catch((err) => {
         ctx.statusCode = 403;
