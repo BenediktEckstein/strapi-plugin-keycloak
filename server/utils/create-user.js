@@ -7,11 +7,15 @@ const keycloakRole = require("./keycloak-role");
 module.exports = async (jwt, strapi) => {
 
   const roleId = await keycloakRole(jwt, strapi)
-  return await strapi.entityService.create('plugin::users-permissions.user', {
+  return await strapi.plugins['users-permissions'].services.user.add({
     email: jwt.email,
     confirmed: jwt.email_verified,
+    password: 'secretpassword', //will be hashed automatically
     blocked: false,
-    username: jwt.name,
+    provider: 'local',
+    created_by: 1, //user admin id
+    updated_by: 1, //user admin id
+    username: jwt.preferred_username,
     role: roleId,
   });
 
