@@ -10,7 +10,7 @@ module.exports = async (jwt, strapi) => {
   return await strapi.plugins['users-permissions'].services.user.add({
     email: jwt.email,
     confirmed: jwt.email_verified,
-    password: 'secretpassword', //will be hashed automatically
+    password: Math.random().toString(36).slice(2),
     blocked: false,
     provider: 'local',
     created_by: 1, //user admin id
