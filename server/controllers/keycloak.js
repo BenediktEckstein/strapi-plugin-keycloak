@@ -47,6 +47,7 @@ const {
   redirectToUrlAfterLogin,
   redirectToUrlAfterLogout,
   appendAccessTokenToRedirectUrlAfterLogin,
+  guiClientId
 } = strapi.config.keycloak;
 
 const scope = "profile";
@@ -171,8 +172,9 @@ module.exports = ({ strapi }) => ({
     ctx.body = "Welcome!";
   },
   logout: (ctx) => {
+    ctx.cookies.set("token");
     ctx.redirect(
-      `${logoutEndpoint}?redirect_uri=${redirectToUrlAfterLogout ?? ""}`
+      `${logoutEndpoint}?post_logout_redirect_uri=${redirectToUrlAfterLogout ?? ""}&client_id=${guiClientId}`
     );
   },
   isLoggedIn: async (ctx) => {
