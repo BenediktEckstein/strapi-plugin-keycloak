@@ -1,16 +1,17 @@
 // const { getService } = require("@strapi/plugin-users-permissions/server/utils");
 const keycloakRole = require("./keycloak-role");
 
-// Create user
 module.exports = async (jwt, strapi, user) => {
 
-  const roleId = await keycloakRole(jwt, strapi)
+  const roleIds = await keycloakRole(jwt, strapi);
 
-  if (user.role.id != roleId) {
-    return await strapi.entityService.update('plugin::users-permissions.user', user.id, { role: roleId })
-    // let updatedUser = await getService("user").edit(user.id, { role: roleId })
-    // return updatedUser;
-  }
-  return user;
+  const firstName = jwt.given_name;
+  const lastName = jwt.family_name;
+  const username = jwt.preferred_username;
+
+  const data = { first_name: firstName, last_name: lastName, username, user_rls: roleIds };
+  let result = await strapi.service("plugin::users-permissions.user").edit(user.id, data);
+
+  return result;
 
 };

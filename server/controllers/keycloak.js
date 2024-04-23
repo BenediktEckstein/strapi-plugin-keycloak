@@ -16,25 +16,7 @@ function cleanUrl(url) {
 }
 
 function parseJwt(token) {
-  try {
-    if (!token) return {};
-
-    var base64Url = token.split(".")[1];
-    var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    var jsonPayload = decodeURIComponent(
-      Buffer.from(base64, "base64")
-        .toString()
-        .split("")
-        .map(function (c) {
-          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-        })
-        .join("")
-    );
-
-    return JSON.parse(jsonPayload);
-  } catch (err) {
-    return {};
-  }
+  return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
 }
 
 const {
@@ -128,7 +110,8 @@ module.exports = ({ strapi }) => ({
 
             // return user;
           })
-          .catch(() => {
+          .catch((e) => {
+            console.log(e)
             throw new Error("User is not exist");
           });
       })
