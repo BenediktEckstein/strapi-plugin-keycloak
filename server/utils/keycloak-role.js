@@ -6,15 +6,11 @@ module.exports = async (jwt, strapi) => {
 
     if (roleMapping) {
         const allRoles = await permissionsRole.findMany({});
-
-        let jwtMappedRoles = allRoles.filter((r) => {
-            if (roleMappingPrefix) {
-                return jwt.realm_access.roles.includes(roleMappingPrefix + r.name)
-
-            } else {
-                return jwt.realm_access.roles.includes(r.name)
-            }
-        });
+        let jwtRoles = jwt.resource_access[jwt.azp]?.roles || []
+        if (roleMappingPrefix && jwt.realm_access.roles) {
+            jwtRoles.push(...jwt.realm_access.roles.filter(r => r.startsWith(roleMappingPrefix)).map(r => r.substring(roleMappingPrefix.length)));
+        }
+        let jwtMappedRoles = allRoles.filter(r => jwtRoles.includes(r.name));
 
         return jwtMappedRoles.map((r) => r.id);
     }
