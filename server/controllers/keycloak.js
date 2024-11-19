@@ -129,7 +129,7 @@ module.exports = ({ strapi }) => ({
         return null;
       });
 
-    console.log("Set cookie");
+    console.log("Set cookie", jwt);
     ctx.cookies.set("token", jwt, {
       httpOnly: false,
       secure: false,
@@ -139,7 +139,7 @@ module.exports = ({ strapi }) => ({
       //     ? process.env.PUBLIC_URL
       //     : "localhost",
     });
-    console.log("After set cookie");
+    console.log("After set cookie", ctx.cookies);
 
     let redirectUrl = redirectToUrlAfterLogin;
 
