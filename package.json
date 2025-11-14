@@ -1,6 +1,6 @@
 {
   "name": "@BenediktEckstein/strapi-plugin-keycloak",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Strapi plugin to support Keycloak authentication of end-users using a middleware.",
   "repository": "https://github.com/BenediktEckstein/strapi-plugin-keycloak",
   "keywords": [
