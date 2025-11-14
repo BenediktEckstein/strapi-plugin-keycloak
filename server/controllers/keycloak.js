@@ -129,11 +129,13 @@ module.exports = ({ strapi }) => ({
         return null;
       });
 
-    console.log("Set cookie", jwt);
+    // console.log("Set cookie", jwt);
+    const maxAge = process.env.TOKEN_MAX_AGE ? Number(process.env.TOKEN_MAX_AGE) * 1000 : 1000 * 60 * 60 * 24 * 1; // 1 Day Age
+
     ctx.cookies.set("token", jwt, {
       httpOnly: false,
       secure: false,
-      maxAge: 1000 * 60 * 60 * 24 * 1, // 14 Day Age
+      maxAge
       // domain:
       //   process.env.NODE_ENV === "production"
       //     ? process.env.PUBLIC_URL
